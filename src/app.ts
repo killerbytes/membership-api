@@ -1,4 +1,5 @@
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import { errorHandler } from "./middlewares/errorHandler";
 import { verifyToken } from "./middlewares/verifyToken";
@@ -6,13 +7,14 @@ import authRoutes from "./modules/auth/auth.routes";
 import locationRoutes from "./modules/location/location.routes";
 import memberRoutes from "./modules/member/member.routes";
 import userRoutes from "./modules/user/user.routes";
+const env = process.env.NODE_ENV || "development";
+dotenv.config({ path: `.env.${env}` });
 
 const app = express();
-const env = process.env.NODE_ENV || "development";
 
 app.use(
   cors({
-    origin: ["https://192.168.0.69:5173"],
+    origin: [process.env.CLIENT_URL || "http://localhost"],
     credentials: true,
   })
 ); // Enable CORS for all routes

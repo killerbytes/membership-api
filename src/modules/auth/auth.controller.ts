@@ -1,4 +1,5 @@
 import { CookieOptions, Request, Response } from "express";
+import * as userService from "../user/user.service";
 import { LoginSchema, RefreshTokenSchema } from "./auth.schema";
 import * as authService from "./auth.service";
 
@@ -27,4 +28,14 @@ export async function refresh(req: Request, res: Response) {
   res.cookie("refreshToken", refreshToken, cookieOptions);
 
   res.json({ accessToken });
+}
+
+export async function getCurrentUser(req: Request, res: Response) {
+  if (!req.user?.id) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  const user = await userService.get(req.user.id);
+  res.json(user);
 }
