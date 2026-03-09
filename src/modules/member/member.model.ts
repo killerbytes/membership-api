@@ -1,9 +1,11 @@
+import crypto from "crypto";
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../../config/database";
+import { getBrgyName, getCityName } from "../../utils/locationCache";
 import { User } from "../user/user.model";
-
 export class Member extends Model {
   declare id: number;
+  declare membershipId: string;
   declare firstName: string;
   declare lastName: string;
   declare middleName: string;
@@ -24,10 +26,9 @@ export class Member extends Model {
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
   declare readonly deletedAt: Date | null;
+  declare readonly permanentCityName: string;
 
   static associate(models: any) {
-    console.log(12344, models);
-
     Member.belongsTo(User, {
       foreignKey: "userId",
       as: "user",
@@ -43,7 +44,12 @@ Member.init(
       primaryKey: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    membershipId: {
+      type: DataTypes.STRING,
+      unique: true,
       allowNull: false,
     },
     firstName: {
@@ -119,6 +125,34 @@ Member.init(
       allowNull: false,
       defaultValue: false,
     },
+    permanentCityName: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const cityCode = this.getDataValue("permanentCity");
+        return getCityName(cityCode);
+      },
+    },
+    permanentBarangayName: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const brgyCode = this.getDataValue("permanentBarangay");
+        return getBrgyName(brgyCode);
+      },
+    },
+    currentCityName: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const cityCode = this.getDataValue("currentCity");
+        return getCityName(cityCode);
+      },
+    },
+    currentBarangayName: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const brgyCode = this.getDataValue("currentBarangay");
+        return getBrgyName(brgyCode);
+      },
+    },
   },
   {
     sequelize,
@@ -126,5 +160,14 @@ Member.init(
     timestamps: true,
     paranoid: true,
     deletedAt: "deletedAt",
+    hooks: {
+      beforeValidate: (member, options) => {
+        if (!member.membershipId) {
+          const year = new Date().getFullYear() % 100;
+          const randomStr = crypto.randomBytes(3).toString("hex").toUpperCase();
+          member.membershipId = `MEM-${year}-${randomStr}`;
+        }
+      },
+    },
   }
 );

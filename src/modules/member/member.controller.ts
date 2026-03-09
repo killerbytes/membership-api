@@ -4,7 +4,19 @@ import * as memberService from "./member.service";
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
-    const validatedData = MemberBaseSchema.parse(req.body);
+    const payload = req.body;
+
+    const newPayload = {
+      ...payload,
+      currentAddress1: payload.permanentAddress1,
+      currentAddress2: payload.permanentAddress2,
+      currentBarangay: payload.permanentBarangay,
+      currentCity: payload.permanentCity,
+    };
+
+    const validatedData = MemberBaseSchema.parse(
+      payload.currentAddress ? newPayload : req.body
+    );
 
     if (!req.user?.id) {
       res.status(401).json({ message: "Unauthorized" });
@@ -24,12 +36,7 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function get(req: Request, res: Response, next: NextFunction) {
   try {
-    const id = Number(req.params.id);
-    if (isNaN(id)) {
-      res.status(400).json({ error: "Invalid ID format" });
-      return;
-    }
-    const member = await memberService.get(id);
+    const member = await memberService.get(req.params.id);
     res.json(member);
   } catch (error) {
     next(error);

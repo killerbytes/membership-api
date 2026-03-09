@@ -3,6 +3,7 @@ const HOST = "192.168.0.69";
 
 import app from "./app";
 import sequelize from "./config/database";
+import { initAddressCache } from "./utils/locationCache";
 import { loadModels } from "./utils/modelLoader";
 
 import fs from "node:fs";
@@ -16,17 +17,16 @@ const options = {
 async function start() {
   try {
     await sequelize.authenticate();
-    console.log("Database connected");
+    console.log("✅ Database connected");
 
-    // Initialize associations dynamically
     await loadModels();
+    await initAddressCache();
 
     await sequelize.sync({ alter: true });
-
-    console.log("Models synced");
+    console.log("✅ Models synced");
 
     https.createServer(options, app).listen(PORT, HOST, () => {
-      console.log(`HTTPS Server running on port ${PORT}`);
+      console.log(`✅ HTTPS Server running on port ${PORT}`);
     });
   } catch (err) {
     console.error(err);

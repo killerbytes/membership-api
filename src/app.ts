@@ -14,10 +14,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL || "http://localhost"],
+    origin: [
+      ...(process.env.CLIENT_URL?.split(",") || "https://localhost:5173"),
+    ],
     credentials: true,
   })
-); // Enable CORS for all routes
+);
 
 app.use(express.urlencoded({ extended: true }));
 

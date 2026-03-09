@@ -3,37 +3,28 @@ import { z } from "zod";
 export const MemberBaseSchema = z.object({
   email: z.email().optional(),
   phone: z.string().optional(),
-  firstName: z.string({
-    error: "First name is required",
-  }),
-  middleName: z.string({
-    error: "Middle name is required",
-  }),
-  lastName: z.string({
-    error: "Last name is required",
-  }),
+  firstName: z.string().trim().min(1, { message: "First name is required" }),
+  middleName: z.string().trim().min(1, { message: "Middle name is required" }),
+  lastName: z.string().trim().min(1, { message: "Last name is required" }),
   tinNo: z.string().optional(),
   rsbsaNo: z.string().optional(),
-  permanentAddress1: z.string({
-    error: "Address is required",
-  }),
+  permanentAddress1: z
+    .string()
+    .trim()
+    .min(1, { message: "Address is required" }),
   permanentAddress2: z.string().optional(),
-  permanentBarangay: z.string({
-    error: "Barangay is required",
-  }),
-  permanentCity: z.string({
-    error: "City is required",
-  }),
-  currentAddress1: z.string({
-    error: "Address is required",
-  }),
+  permanentBarangay: z
+    .string()
+    .trim()
+    .min(1, { message: "Barangay is required" }),
+  permanentCity: z.string().trim().min(1, { message: "City is required" }),
+  currentAddress1: z.string().trim().min(1, { message: "Address is required" }),
   currentAddress2: z.string().optional(),
-  currentBarangay: z.string({
-    error: "Barangay is required",
-  }),
-  currentCity: z.string({
-    error: "City is required",
-  }),
+  currentBarangay: z
+    .string()
+    .trim()
+    .min(1, { message: "Barangay is required" }),
+  currentCity: z.string().trim().min(1, { message: "City is required" }),
   photoUrl: z.string({
     error: "Photo is required",
   }),
@@ -54,6 +45,7 @@ export const MemberInputSchema = MemberBaseSchema.extend({}).required({
 
 export const MemberSchema = MemberInputSchema.extend({
   completed: z.boolean(),
+  membershipId: z.string(),
 });
 
 export type MemberInput = z.infer<typeof MemberInputSchema>;

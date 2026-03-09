@@ -7,6 +7,21 @@ import { MemberBaseSchema } from "./member.schema";
 export async function create(
   data: z.infer<typeof MemberBaseSchema> & { userId: number }
 ) {
+  const user: (User & { member?: Member }) | null = await User.findByPk(
+    data.userId,
+    {
+      include: [
+        {
+          model: Member,
+          as: "member",
+        },
+      ],
+    }
+  );
+
+  if (user?.member) {
+    throw new Error("User is already a member");
+  }
   const transaction = await sequelize.transaction();
   try {
     const member = await Member.create(data as any, { transaction });
@@ -19,11 +34,12 @@ export async function create(
   }
 }
 
-export async function get(id: number) {
+export async function get(id: string) {
   try {
-    console.log(123, id);
-
-    const member = await Member.findByPk(id, {
+    const member = await Member.findOne({
+      where: {
+        userId: id,
+      },
       include: [
         {
           model: User,
