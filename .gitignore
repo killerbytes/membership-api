@@ -32,3 +32,4 @@ env*
 Dockerfile
 server.key
 server.cert
+uploads/

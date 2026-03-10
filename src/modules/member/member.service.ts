@@ -85,3 +85,22 @@ export async function list() {
     ],
   });
 }
+
+export async function updateImageUrl(
+  membershipId: string,
+  type: "id" | "selfie",
+  url: string
+) {
+  const member = await Member.findOne({ where: { membershipId } });
+  if (!member) {
+    throw new Error("Member not found");
+  }
+
+  if (type === "id") {
+    member.validIdUrl = url;
+  } else {
+    member.photoUrl = url;
+  }
+
+  return member.save();
+}

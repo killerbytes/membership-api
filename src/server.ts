@@ -1,3 +1,4 @@
+import "./config/env";
 const PORT = 3000;
 const HOST = "192.168.0.69";
 

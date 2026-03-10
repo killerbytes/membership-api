@@ -1,6 +1,5 @@
-const env = process.env.NODE_ENV || "development";
-const envPath = `.env.${env}`;
-require("dotenv").config({ path: envPath });
+require("tsx/cjs");
+require("./env");
 
 module.exports = {
   development: {
