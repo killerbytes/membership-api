@@ -23,7 +23,7 @@ export const errorHandler = (
   }
 
   if (err instanceof z.ZodError) {
-    const parsedErrors = JSON.parse(err);
+    const parsedErrors = JSON.parse(err.message);
 
     const errors = parsedErrors.map((error: any) => {
       return {

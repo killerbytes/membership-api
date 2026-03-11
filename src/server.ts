@@ -10,11 +10,6 @@ import { loadModels } from "./utils/modelLoader";
 import fs from "node:fs";
 import https from "node:https";
 
-const options = {
-  key: fs.readFileSync("server.key"),
-  cert: fs.readFileSync("server.cert"),
-};
-
 async function start() {
   try {
     await sequelize.authenticate();
@@ -26,9 +21,19 @@ async function start() {
     await sequelize.sync({ alter: true });
     console.log("✅ Models synced");
 
-    https.createServer(options, app).listen(PORT, HOST, () => {
-      console.log(`✅ HTTPS Server running on port ${PORT}`);
-    });
+    if (process.env.NODE_ENV === "production") {
+      app.listen(PORT, () => {
+        console.log(`✅ HTTP Server running on port ${PORT}`);
+      });
+    } else {
+      const options = {
+        key: fs.readFileSync("server.key"),
+        cert: fs.readFileSync("server.cert"),
+      };
+      https.createServer(options, app).listen(PORT, HOST, () => {
+        console.log(`✅ HTTPS Server running on port ${PORT}`);
+      });
+    }
   } catch (err) {
     console.error(err);
   }
