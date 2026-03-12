@@ -1,5 +1,5 @@
 import "./config/env";
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 5000;
 const HOST = "192.168.0.69";
 
 import app from "./app";

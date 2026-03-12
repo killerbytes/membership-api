@@ -13,7 +13,12 @@ export async function getAll(req: Request, res: Response) {
 }
 
 export async function create(req: Request, res: Response) {
-  const validatedData = UserBaseSchema.parse(req.body);
+  const { email, mobile, password } = req.body;
+  const validatedData = UserBaseSchema.parse({
+    email: email?.trim(),
+    mobile: mobile?.trim(),
+    password: password.trim(),
+  });
   const user = await userService.create(validatedData);
   res.json(user);
 }

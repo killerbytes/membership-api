@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const UserBaseSchema = z
   .object({
-    email: z.string().email().optional(),
+    email: z.email().optional(),
     mobile: z.string().optional(),
     password: z
       .string({

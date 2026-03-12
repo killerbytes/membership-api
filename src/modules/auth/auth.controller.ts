@@ -13,7 +13,11 @@ const cookieOptions: CookieOptions = {
 };
 
 export async function login(req: Request, res: Response) {
-  const validatedData = LoginSchema.parse(req.body ?? {});
+  const { identifier, password } = req.body;
+  const validatedData = LoginSchema.parse({
+    identifier: identifier.trim(),
+    password: password.trim(),
+  });
   const { refreshToken, accessToken } = await authService.login(validatedData);
 
   res.cookie("refreshToken", refreshToken, cookieOptions);
