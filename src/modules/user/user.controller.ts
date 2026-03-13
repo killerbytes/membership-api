@@ -15,8 +15,8 @@ export async function getAll(req: Request, res: Response) {
 export async function create(req: Request, res: Response) {
   const { email, mobile, password } = req.body;
   const validatedData = UserBaseSchema.parse({
-    email: email?.trim(),
-    mobile: mobile?.trim(),
+    email: email?.trim().toLowerCase(),
+    mobile: mobile?.trim().toLowerCase(),
     password: password.trim(),
   });
   const user = await userService.create(validatedData);

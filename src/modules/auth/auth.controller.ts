@@ -15,7 +15,7 @@ const cookieOptions: CookieOptions = {
 export async function login(req: Request, res: Response) {
   const { identifier, password } = req.body;
   const validatedData = LoginSchema.parse({
-    identifier: identifier.trim(),
+    identifier: identifier.trim().toLowerCase(),
     password: password.trim(),
   });
   const { refreshToken, accessToken } = await authService.login(validatedData);
