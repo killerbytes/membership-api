@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import { errorHandler } from "./middlewares/errorHandler";
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 import path from "path";
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/auth", authRoutes);

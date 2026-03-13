@@ -5,7 +5,8 @@ import * as controller from "./auth.controller";
 const router = Router();
 
 router.post("/login", controller.login);
-router.post("/refresh", controller.refresh);
+router.post("/refresh-token", controller.refresh);
 router.get("/current-user", verifyToken, controller.getCurrentUser);
+router.post("/logout", controller.logout);
 
 export default router;

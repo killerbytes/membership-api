@@ -1,6 +1,6 @@
-import { CookieOptions, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import * as userService from "../user/user.service";
-import { LoginSchema, RefreshTokenSchema } from "./auth.schema";
+import { LoginSchema } from "./auth.schema";
 import * as authService from "./auth.service";
 
 const env = process.env.NODE_ENV || "development";
@@ -25,13 +25,28 @@ export async function login(req: Request, res: Response) {
   res.json({ accessToken });
 }
 
-export async function refresh(req: Request, res: Response) {
-  const validatedData = RefreshTokenSchema.parse(req.body ?? {});
-  const { refreshToken, accessToken } =
-    await authService.refresh(validatedData);
-  res.cookie("refreshToken", refreshToken, cookieOptions);
+export async function refresh(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { refreshToken } = req.cookies;
+    // const validatedData = RefreshTokenSchema.parse({ refreshToken });
+    const { refreshToken: newRefreshToken, accessToken } =
+      await authService.refresh(refreshToken);
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
+    res.json({ accessToken });
+  } catch (error) {
+    next(error);
+  }
+}
 
-  res.json({ accessToken });
+export async function logout(req: Request, res: Response) {
+  const { refreshToken } = req.cookies;
+
+  if (refreshToken) {
+    await authService.logout(refreshToken);
+  }
+
+  res.clearCookie("refreshToken", cookieOptions);
+  res.json({ message: "Logged out successfully" });
 }
 
 export async function getCurrentUser(req: Request, res: Response) {

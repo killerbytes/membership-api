@@ -78,6 +78,9 @@ User.init(
       withPassword: {
         attributes: { include: ["password"] },
       },
+      withRefreshToken: {
+        attributes: { include: ["refreshToken"] },
+      },
     },
     timestamps: true,
     paranoid: true,
